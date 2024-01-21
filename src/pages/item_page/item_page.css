@@ -1,0 +1,7 @@
+.items_list{
+  display: flex!important;
+  justify-content: center;
+  align-content: center;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
