@@ -2,16 +2,19 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import Table from "react-bootstrap/Table";
 import Accordion from "react-bootstrap/Accordion";
+import LoadingSpinner from "./spinner";
 
 function OrderTable() {
   const [OrdersList, setOrdersList] = useState([]);
   const ordersUrl = "http://localhost:3000/api/v1/orders";
+  const [isLoading, setIsLoading] = useState(true);
   const fetchOrdersList = () => {
     fetch(ordersUrl)
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
         setOrdersList(data);
+        setIsLoading(false)
       });
   };
   useEffect(() => {
@@ -19,37 +22,42 @@ function OrderTable() {
   }, []);
   return (
     <>
-      {OrdersList.map((order) => (
-        <Accordion defaultActiveKey="0">
-          <Accordion.Item eventKey="1">
-            <Accordion.Header>
-              <strong>Order Number: #{order.id}</strong> : {order.status}
-            </Accordion.Header>
-            <Accordion.Body>
-              <strong>Order placed at :</strong> {order.created_at} by{" "}
-              {order.user.email}
-              <Table striped bordered hover>
-                <thead>
+    {isLoading ? (<LoadingSpinner/>) : (<>
+    {OrdersList.map((order) => (
+      <Accordion defaultActiveKey="0">
+        <Accordion.Item eventKey="1">
+          <Accordion.Header>
+            <strong>Order Number: #{order.id}</strong> : {order.status}
+          </Accordion.Header>
+          <Accordion.Body>
+            <div className="row d-flex flex-nowrap pb-3">
+              <div className="col-6"> <strong>Order placed at :</strong> {order.created_at}</div>
+              <div className="col-6 d-flex justify-content-end"> by: {order.user.email} </div>
+              </div>
+
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Items Purchased</th>
+                  <th>Quantity</th>
+                  <th>Sub Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {order.order_items.map((item) => (
                   <tr>
-                    <th>Items Purchased</th>
-                    <th>Quantity</th>
-                    <th>Sub Total</th>
+                    <td><strong>{item.item.name}</strong><br></br> { item.item.description}</td>
+                    <td>{item.quantity}</td>
+                    <td>{item.line_total}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {order.order_items.map((item) => (
-                    <tr>
-                      <td>{item.item.name}<br></br> { item.item.description}</td>
-                      <td>{item.quantity}</td>
-                      <td>{item.line_total}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </Accordion.Body>
-          </Accordion.Item>
-        </Accordion>
-      ))}
+                ))}
+              </tbody>
+            </Table>
+          </Accordion.Body>
+        </Accordion.Item>
+      </Accordion>
+    ))}</>)}
+
     </>
   );
 }

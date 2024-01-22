@@ -3,8 +3,9 @@ import { useState, useEffect } from "react";
 import "./items.css";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
+import LoadingSpinner from "./spinner";
 
-function ItemCard() {
+function ItemCard(props) {
   const [categoriesList, setCategoriesList]  = useState([]);
   const [ItemsList, setItemsList] = useState([]);
   const [filter, setFilter] = useState('default');
@@ -19,6 +20,7 @@ function ItemCard() {
       .then((data) => {
         console.log(data)
         setCategoriesList(data);
+        setIsLoading(false)
       });
   };
   const fetchItemsList = () => {
@@ -54,27 +56,33 @@ function ItemCard() {
   };
 
   return (
-    <>{ isLoading} 
+    <>
+    {isLoading ? (
+      <LoadingSpinner/>
+    ) : (
+      <>
       <select value={filter} onChange={handleSelectChange} className="cust_input">
-        <option value={"default"}> Show All</option>
-        {categoriesList.map((option, index) => (
-          <option key={index} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-      {filteredItems().map((Item, index) => (
-        <Card className="items_card">
-          <Card.Img variant="top" src={Item.image} height={300} />
-          <Card.Body>
-            <Card.Title>{Item.name}</Card.Title>
-            <Card.Title>{Item.categories}</Card.Title>
-            <Card.Text>{Item.description}</Card.Text>
-            <Card.Text>Rs: {Item.price}</Card.Text>
-            <Button variant="primary">Add to Cart</Button>
-          </Card.Body>
-        </Card>
+      <option value={"default"}> Show All</option>
+      {categoriesList.map((option, index) => (
+        <option key={index} value={option}>
+          {option}
+        </option>
       ))}
+    </select>
+    {filteredItems().map((Item, index) => (
+        <div className="d-flex items_card">
+        <img className = "items_img"variant="top" src={Item.image}  />
+        <div className="d-flex flex-column items_desc">
+          <Card.Title>{Item.name}</Card.Title>
+          <div className="d-flex category_box">{Item.categories.map((category)=>(<div className="single_category">{category}</div>))}</div>
+          <Card.Text>{Item.description}</Card.Text>
+          <Card.Text>Rs: {Item.price}</Card.Text>
+          <Button variant="primary">Add to Cart</Button>
+          </div>
+        </div>
+    ))}</>
+    )}
+
     </>
   );
 }

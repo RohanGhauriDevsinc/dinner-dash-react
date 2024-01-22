@@ -1,6 +1,6 @@
 import * as React from "react";
-import ItemCard from "../../components/items";
 import "./item_page.css";
+import ItemCard from "../../components/items";
 
 function Item() {
   return (
