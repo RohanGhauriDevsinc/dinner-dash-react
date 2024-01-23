@@ -5,6 +5,8 @@
   margin: 20px;
   border-radius: 15px;
   padding: 20px;
+  background-color: #3B3B3B;
+  color: white;
 }
 .items_img{
   object-fit: cover;
@@ -38,6 +40,8 @@ height: 150px;
   border-radius: 4px;
   width: 100%;
   font-size: 1rem;
+  margin-top: 50px;
+
 }
 .cust_card{
   --bs-card-spacer-y: 1rem;

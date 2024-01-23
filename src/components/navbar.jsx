@@ -8,8 +8,13 @@ import { Link } from "react-router-dom";
 function TopNavBar() {
   return (
     <>
-      <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
-        <Container>
+      <Navbar
+        collapseOnSelect
+        expand="lg"
+        className="bg-body-tertiary"
+        data-bs-theme="dark"
+      >
+        <Container fluid>
           <Navbar.Brand href="#home">Dinner Dash</Navbar.Brand>
           <BrandLogo />
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
