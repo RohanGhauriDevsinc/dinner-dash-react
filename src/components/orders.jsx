@@ -5,10 +5,14 @@ import Accordion from "react-bootstrap/Accordion";
 import LoadingSpinner from "./spinner";
 import "./orders.css";
 
+
 function OrderTable() {
   const [OrdersList, setOrdersList] = useState([]);
   const ordersUrl = "http://localhost:3000/api/v1/orders";
   const [isLoading, setIsLoading] = useState(true);
+  const [filter, setFilter] = useState("default");
+  const statusList = ["ordered", "paid", "completed", "cancelled"];
+
   const fetchOrdersList = () => {
     fetch(ordersUrl)
       .then((response) => response.json())
@@ -21,13 +25,39 @@ function OrderTable() {
   useEffect(() => {
     fetchOrdersList();
   }, []);
+
+  const handleSelectChange = (e) => {
+    setFilter(e.target.value);
+    console.log(filter, filteredOrders());
+  };
+
+  const filteredOrders = () => {
+    if (filter === "default") {
+      return OrdersList;
+    } else {
+      return OrdersList.filter((order) => order.status === filter);
+    }
+  };
   return (
     <>
       {isLoading ? (
         <LoadingSpinner />
       ) : (
         <>
-          {OrdersList.map((order, index) => (
+          <select
+            value={filter}
+            onChange={handleSelectChange}
+            className="cust_input"
+            data-bs-theme="dark"
+          >
+            <option value={"default"}> Show All</option>
+            {statusList.map((option, index) => (
+              <option key={index} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          {filteredOrders().map((order, index) => (
             <Accordion
               defaultActiveKey="0"
               data-bs-theme="dark"
