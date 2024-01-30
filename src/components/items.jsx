@@ -70,10 +70,6 @@ function ItemCard() {
     }
   };
 
-  const resetCart = () => {
-    setCartItem([]);
-  };
-
   return (
     <>
       {isLoading ? (

@@ -1,8 +1,10 @@
 import React, { useContext, useState } from "react";
 import { CartContext } from "../store/cartContextProvider";
 import "./cart.scss";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-function Cart(props) {
+function Cart() {
   const { item } = useContext(CartContext);
   const [cartItem, setCartItem] = item;
 
@@ -15,21 +17,44 @@ function Cart(props) {
       },
     })
       .then((response) => response.json())
-      .then((json) => console.log(json));
+      .then((result) => handleSuccess(result))
+      .catch((error) => {console.error('Error:', error.message);})
   };
 
+  const handleSuccess = (res) => {
+    console.log(res);
+    toast.success(`Order Placed Successfully. Your Order Number is #${res.id}`, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+    resetCart();
+  };
   const increaseQty = (currItem) => {
-    const itemIndex = cartItem.findIndex((item) => (item.id === currItem))
-      cartItem[itemIndex].qty++;
-      setCartItem(cartItem)
-  }
+    const itemIndex = cartItem.findIndex((item) => item.id === currItem);
+    cartItem[itemIndex].qty++;
+    setCartItem(cartItem);
+  };
 
   const decreseQty = (currItem) => {
-    const itemIndex = cartItem.findIndex((item) => (item.id === currItem))
-      cartItem[itemIndex].qty--;
-      setCartItem(cartItem)
-  }
+    const itemIndex = cartItem.findIndex((item) => item.id === currItem);
+    cartItem[itemIndex].qty--;
+    setCartItem(cartItem);
+    if (cartItem[itemIndex].qty <= 0) {
+      const cartDuplicate = [...cartItem];
+      cartDuplicate.splice(itemIndex, 1);
+      setCartItem(cartDuplicate);
+    }
+  };
 
+  const resetCart = () => {
+    setCartItem([]);
+  };
 
   return (
     <>
@@ -50,23 +75,39 @@ function Cart(props) {
               <span className="item-name">{item.name}</span>
               <span className="item-price">{item.price * item.qty}</span>
               <span className="item-quantity">Quantity: {item.qty}</span>
-              <button className="prdct-qty-btn" type="button" onClick = {()=>{decreseQty(item.id)}} >
+              <button
+                className="prdct-qty-btn"
+                type="button"
+                onClick={() => {
+                  decreseQty(item.id);
+                }}
+              >
                 <i className="fa fa-minus"></i>
               </button>
-              <button className="prdct-qty-btn" type="button" onClick = {()=>{increaseQty(item.id)}}>
+              <button
+                className="prdct-qty-btn"
+                type="button"
+                onClick={() => {
+                  increaseQty(item.id);
+                }}
+              >
                 <i className="fa fa-plus"></i>
               </button>
             </li>
           ))}
         </ul>
-        <button
-          className="button"
-          onClick={() => {
-            placeOrder();
-          }}
-        >
-          Checkout
-        </button>
+        {cartItem.length <= 0 ? (
+          <div>Oops your cart is empty</div>
+        ) : (
+          <button
+            className="button"
+            onClick={() => {
+              placeOrder();
+            }}
+          >
+            Checkout
+          </button>
+        )}
       </div>
     </>
   );

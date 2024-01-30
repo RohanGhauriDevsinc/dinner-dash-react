@@ -5,11 +5,13 @@ import Order from "./pages/order_page/order_page";
 import AddItems from "./components/additems";
 import TopNavBar from "./components/navbar";
 import CartContextProvider from "./store/cartContextProvider";
+import { ToastContainer} from 'react-toastify';
 
 function App() {
   return (
     <div className="container">
       <CartContextProvider>
+      <ToastContainer/>
         <BrowserRouter>
           <TopNavBar />
           <Routes>
